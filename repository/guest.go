@@ -28,7 +28,6 @@ func (repo *GuestRepository) Book(guest *structs.Guest) error {
 		tx.Rollback()
 		return err
 	}
-	// Check room availability
 
 	// Check room availability
 	if room.Availability != 1 {
@@ -36,7 +35,6 @@ func (repo *GuestRepository) Book(guest *structs.Guest) error {
 		return errors.New("room not available")
 	}
 
-	// Populate the guest price with the fetched room price
 	guest.Price = room.RoomType.Price
 	guest.Total = room.RoomType.Price*float64(guest.Days) - guest.Disc
 
@@ -98,22 +96,18 @@ func (repo *GuestRepository) CheckOut(id int64, updatedGuest *structs.Guest) err
 		return errors.New("already checkout")
 	}
 
-	// Find the room associated with the guest
 	if err := repo.db.Model(&room).First(&room, guest.RoomID).Error; err != nil {
 		return err
 	}
 
-	// Update room availability to 1 (available)
 	room.Availability = 1
 	if err := repo.db.Save(&room).Error; err != nil {
 		return err
 	}
 
-	// Update guest data
 	updatedGuest.CheckOutAt = time.Now()
 	updatedGuest.Status = 2
 
-	// Update the guest with check-out information
 	return repo.db.Model(&guest).Updates(updatedGuest).Error
 }
 func (repo *GuestRepository) Extend(id int64, updatedRoomType *structs.Guest) error {
