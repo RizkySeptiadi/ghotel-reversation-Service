@@ -63,13 +63,13 @@ func (repo *RoomRepository) GetUnBooked() ([]structs.Room, error) {
 	var Rooms []structs.Room
 
 	subquery := repo.db.Model(&structs.Guest{}).
-		Select("room_id").
+		Select("roomid").
 		Where("status = ?", 1)
 
 	if err := repo.db.Preload("Floor").
 		Preload("RoomType").
 		Preload("Guests").
-		Not("room_id IN (?)", subquery).
+		Not("id IN (?)", subquery).
 		Find(&Rooms).Error; err != nil {
 		return nil, err
 	}
