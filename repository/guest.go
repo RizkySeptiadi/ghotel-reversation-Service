@@ -30,10 +30,10 @@ func (repo *GuestRepository) Book(guest *structs.Guest) error {
 	}
 
 	// Check room availability
-	if room.Availability != 1 {
-		tx.Rollback()
-		return errors.New("room not available")
-	}
+	// if room.Availability != 1 {
+	// 	tx.Rollback()
+	// 	return errors.New("room not available")
+	// }
 
 	guest.Price = room.RoomType.Price
 	guest.Total = room.RoomType.Price*float64(guest.Days) - guest.Disc
